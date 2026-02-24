@@ -6,7 +6,22 @@ import base64 as _b
 import hashlib as _h
 import sys as _s
 import traceback as _t
+# --- DUMMY SERVER FOR RENDER ---
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
+class MockServer(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is Running")
+
+def run_dummy():
+    server = HTTPServer(('0.0.0.0', 10000), MockServer)
+    server.serve_forever()
+
+threading.Thread(target=run_dummy, daemon=True).start()
+# -------------------------------
 def _x(d, k):
     k = k.encode() if isinstance(k, str) else k
     return bytes(b ^ k[i % len(k)] for i, b in enumerate(d))
